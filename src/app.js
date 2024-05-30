@@ -51,7 +51,7 @@ function App() {
           let newEmphasizedState = [...emphasizedState];
           newEmphasizedState[y][x] = !newEmphasizedState[y][x];
           setEmphasizedState(newEmphasizedState);
-          console.log(isPaused + " is paused");
+          //console.log(isPaused + " is paused");
 
           let paused = isPausedRef.current;
 
