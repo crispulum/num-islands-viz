@@ -86,3 +86,58 @@
 .outlined {
   outline: 5px solid darkslategrey;
 }
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+.control-panel input {
+  margin-bottom: 10px;
+}
+
+.control-panel button {
+  margin-bottom: 10px;
+}
+
+.grid-and-stack {
+  display: flex;
+  flex-direction: row;
+}
+
+.grid-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.stack-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stack-content {
+  margin-top: 10px;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  border: 1px solid #ddd;
+  text-align: center;
+  line-height: 200%;
+}
+
+.row {
+  display: flex;
+}

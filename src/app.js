@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
-function createRandomGrid() {
-  return Array.from({ length: 12 }, () =>
-    Array.from({ length: 12 }, () => Math.round(Math.random()))
+function createRandomGrid(length) {
+  return Array.from({ length }, () =>
+    Array.from({ length }, () => Math.round(Math.random()))
   );
 }
 
-function createEmptyToggleStates() {
-  return Array.from({ length: 12 }, () =>
-    Array.from({ length: 12 }, () => false)
+function createEmptyToggleStates(length) {
+  return Array.from({ length }, () =>
+    Array.from({ length }, () => false)
   );
 }
 
-function createEmptyHighlightedStates() {
-  return Array.from({ length: 12 }, () =>
-    Array.from({ length: 12 }, () => false)
+function createEmptyHighlightedStates(length) {
+  return Array.from({ length }, () =>
+    Array.from({ length }, () => false)
   );
 }
 
 function toggleCell(row, col, shiftKey, ctrlKey, grid, setGrid, toggleStates, setToggleStates, emphasizedState, setEmphasizedState) {
   if (shiftKey) {
-    setHighlightedCurrentCell(prevState => {
+    setEmphasizedState(prevState => {
       const newState = [...prevState];
       newState[row][col] = !newState[row][col];
       return newState;
@@ -42,19 +42,24 @@ function toggleCell(row, col, shiftKey, ctrlKey, grid, setGrid, toggleStates, se
 }
 
 function App() {
-  const [grid, setGrid] = useState(createRandomGrid());
-  const [toggleStates, setToggleStates] = useState(createEmptyToggleStates());
-  const [emphasizedState, setEmphasizedState] = useState(createEmptyHighlightedStates());
+  const initialGridSize = 12;
+  const [gridSize, setGridSize] = useState(initialGridSize);
+  const [grid, setGrid] = useState(createRandomGrid(initialGridSize));
+  const [toggleStates, setToggleStates] = useState(createEmptyToggleStates(initialGridSize));
+  const [emphasizedState, setEmphasizedState] = useState(createEmptyHighlightedStates(initialGridSize));
   const [stackContent, setStackContent] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
   const isPausedRef = useRef(isPaused);
   const [coordinatesToCheck, setCoordinatesToCheck] = useState([]);
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
   }, [isPaused]);
 
   useEffect(() => {
+    let isCancelled = false;
+
     async function numIslands2(Realgrid) {
       let grid = [...Realgrid];
       if (grid.length === 0) return 0;
@@ -63,37 +68,37 @@ function App() {
       let islandCount = 0;
       let newCoordinatesToCheck = [];
 
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
+      for (let y = 0; y < rows && !isCancelled; y++) {
+        for (let x = 0; x < cols && !isCancelled; x++) {
           let newEmphasizedState = [...emphasizedState];
           newEmphasizedState[y][x] = !newEmphasizedState[y][x];
           setEmphasizedState(newEmphasizedState);
-          console.log(isPaused + " is paused")
+          console.log(isPaused + " is paused");
 
           let paused = isPausedRef.current;
 
-          while (paused) {
+          while (paused && !isCancelled) {
             await new Promise(resolve => setTimeout(resolve, 1000));
             paused = isPausedRef.current;
           }
 
-          if (grid[y][x] === 1) {
+          if (grid[y][x] === 1 && !isCancelled) {
             islandCount++;
             const coordinatesToCheck = [[y, x]];
 
             newCoordinatesToCheck.push(...coordinatesToCheck);
 
-            while (coordinatesToCheck.length > 0) {
+            while (coordinatesToCheck.length > 0 && !isCancelled) {
               setStackContent([...coordinatesToCheck]);
               setCoordinatesToCheck([...coordinatesToCheck]);
               await new Promise(resolve => setTimeout(resolve, 1000));
               const [currY, currX] = coordinatesToCheck.pop();
               let paused = isPausedRef.current;
-              while (paused) {
+              while (paused && !isCancelled) {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 paused = isPausedRef.current;
               }
-              if (grid[currY][currX] === 1) {
+              if (grid[currY][currX] === 1 && !isCancelled) {
                 grid[currY][currX] = 2;
                 setGrid([...grid]);
                 if (currY - 1 >= 0 && grid[currY - 1][currX] === 1) {
@@ -118,8 +123,8 @@ function App() {
           newEmphasizedState = [...emphasizedState];
           newEmphasizedState[y][x] = !newEmphasizedState[y][x];
           setEmphasizedState(newEmphasizedState);
-          setStackContent([])
-          setCoordinatesToCheck([])
+          setStackContent([]);
+          setCoordinatesToCheck([]);
         }
       }
 
@@ -127,7 +132,27 @@ function App() {
     }
 
     numIslands2(grid);
-  }, []);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [resetKey]);
+
+  const handleRestart = () => {
+    setGrid(createRandomGrid(gridSize));
+    setToggleStates(createEmptyToggleStates(gridSize));
+    setEmphasizedState(createEmptyHighlightedStates(gridSize));
+    setStackContent([]);
+    setCoordinatesToCheck([]);
+    setResetKey(prevKey => prevKey + 1);
+  };
+
+  const handleGridSizeChange = (e) => {
+    const newSize = parseInt(e.target.value, 10);
+    if (!isNaN(newSize) && newSize > 0) {
+      setGridSize(newSize);
+    }
+  };
 
   const togglePause = () => {
     setIsPaused(prevState => !prevState);
@@ -136,12 +161,21 @@ function App() {
   return (
     <div className="App">
       <div className="grid-and-stack">
+        <div className="control-panel">
+          <input
+            value={gridSize}
+            onChange={handleGridSizeChange}
+            placeholder="Grid Size"
+          />
+          <button onClick={handleRestart}>Restart</button>
+          <button onClick={togglePause}>{isPaused ? "Resume" : "Pause"}</button>
+        </div>
         <div className="grid-container">
           {grid.map((row, rowIndex) => (
             <div key={rowIndex} className="row">
               {row.map((cell, colIndex) => {
                 const isInCoordinatesToCheck = coordinatesToCheck.some(coord => coord[0] === rowIndex && coord[1] === colIndex);
-                console.log(coordinatesToCheck)
+                console.log(coordinatesToCheck);
                 return (
                   <div
                     key={colIndex}
@@ -149,7 +183,6 @@ function App() {
                       } ${cell !== 1 && cell !== 2 && 'zero'} ${toggleStates[rowIndex][colIndex] ? 'active' : ''
                       } ${emphasizedState[rowIndex][colIndex] ? 'emphasized' : ''
                       } ${isInCoordinatesToCheck ? 'outlined' : ''}`}
-                    onClick={(e) => toggleCell(rowIndex, colIndex, e.shiftKey, e.ctrlKey, grid, setGrid, toggleStates, setToggleStates, emphasizedState, setEmphasizedState)}
                   >
                     {cell}
                   </div>
@@ -161,7 +194,6 @@ function App() {
         <div className="stack-container">
           <div className="stack-header">
             <h2>Stack Content</h2>
-            <button onClick={togglePause}>{isPaused ? "Resume" : "Pause"}</button>
           </div>
           <div className="stack-content">
             {stackContent.map((coord, index) => (
@@ -174,7 +206,6 @@ function App() {
       </div>
     </div>
   );
-
 }
 
 export default App;
