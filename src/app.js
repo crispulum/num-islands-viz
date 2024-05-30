@@ -19,28 +19,6 @@ function createEmptyHighlightedStates(length) {
   );
 }
 
-function toggleCell(row, col, shiftKey, ctrlKey, grid, setGrid, toggleStates, setToggleStates, emphasizedState, setEmphasizedState) {
-  if (shiftKey) {
-    setEmphasizedState(prevState => {
-      const newState = [...prevState];
-      newState[row][col] = !newState[row][col];
-      return newState;
-    });
-  } else if (ctrlKey && grid[row][col] === 1) {
-    setGrid(prevState => {
-      const newState = [...prevState];
-      newState[row][col] = 2;
-      return newState;
-    });
-  } else {
-    setToggleStates(prevState => {
-      const newState = [...prevState];
-      newState[row][col] = !newState[row][col];
-      return newState;
-    });
-  }
-}
-
 function App() {
   const initialGridSize = 12;
   const [gridSize, setGridSize] = useState(initialGridSize);
