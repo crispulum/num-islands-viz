@@ -1,0 +1,81 @@
+.App {
+  text-align: center;
+}
+
+.grid-and-stack {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.grid-container {
+  display: inline-block;
+  border: 1px solid black;
+  margin-right: 20px;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.zero {
+  background-color: blue;
+}
+
+.one {
+  background-color: lightgreen;
+}
+
+.two {
+  background-color: darkgreen;
+}
+
+.active {
+  outline: 3px solid red;
+}
+
+.shift-active {
+  outline: 2px solid gold;
+}
+
+.emphasized {
+  outline: 5px solid gold;
+}
+
+.stack-container {
+  border: 1px solid black;
+  padding: 10px;
+  height: 600px;
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stack-header {
+  text-align: center;
+}
+
+.stack-content {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+}
+
+.stack-item {
+  padding: 5px;
+  border: 1px solid gray;
+  margin-top: 5px;
+  background-color: #f0f0f0;
+}
