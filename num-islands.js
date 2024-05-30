@@ -1,4 +1,4 @@
-function numIslands2(grid) {
+function numIslands(grid) {
     if (grid.length === 0) return 0;
 
     const rows = grid.length;
@@ -9,31 +9,33 @@ function numIslands2(grid) {
         for (let x = 0; x < cols; x++) {
             if (grid[y][x] === 1) {
                 islandCount++;
+                //an array to keep track of cells to check
                 const coordinatesToCheck = [[y, x]];
+                
 
                 while (coordinatesToCheck.length > 0) {
                     const [currY, currX] = coordinatesToCheck.pop();
 
-                    if (grid[currY][currX] === 1) {
-                        grid[currY][currX] = 2; // Mark the cell as visited
+                    
+                        grid[currY][currX] = 2; // indicate that a cell is visited
 
-                        // Check up
+                        // check down
                         if (currY - 1 >= 0 && grid[currY - 1][currX] === 1) {
                             coordinatesToCheck.push([currY - 1, currX]);
                         }
-                        // Check down
+                        // up
                         if (currY + 1 < rows && grid[currY + 1][currX] === 1) {
                             coordinatesToCheck.push([currY + 1, currX]);
                         }
-                        // Check left
+                        // left
                         if (currX - 1 >= 0 && grid[currY][currX - 1] === 1) {
                             coordinatesToCheck.push([currY, currX - 1]);
                         }
-                        // Check right
+                        // right
                         if (currX + 1 < cols && grid[currY][currX + 1] === 1) {
                             coordinatesToCheck.push([currY, currX + 1]);
                         }
-                    }
+                    
                 }
             }
         }

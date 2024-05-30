@@ -76,7 +76,7 @@ function App() {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 paused = isPausedRef.current;
               }
-              if (grid[currY][currX] === 1 && !isCancelled) {
+              if (!isCancelled) {
                 grid[currY][currX] = 2;
                 setGrid([...grid]);
                 if (currY - 1 >= 0 && grid[currY - 1][currX] === 1) {
