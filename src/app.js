@@ -123,8 +123,6 @@ function App() {
         }
       }
 
-      //setCoordinatesToCheck(newCoordinatesToCheck);
-
       return islandCount;
     }
 
