@@ -19,7 +19,7 @@ function createEmptyHighlightedStates() {
   );
 }
 
-function toggleCell(row, col, shiftKey, ctrlKey) {
+function toggleCell(row, col, shiftKey, ctrlKey, grid, setGrid, toggleStates, setToggleStates, emphasizedState, setEmphasizedState) {
   if (shiftKey) {
     setHighlightedCurrentCell(prevState => {
       const newState = [...prevState];
@@ -47,7 +47,8 @@ function App() {
   const [emphasizedState, setEmphasizedState] = useState(createEmptyHighlightedStates());
   const [stackContent, setStackContent] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
-  const isPausedRef = useRef(isPaused); 
+  const isPausedRef = useRef(isPaused);
+  const [coordinatesToCheck, setCoordinatesToCheck] = useState([]);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
@@ -60,6 +61,7 @@ function App() {
       const rows = grid.length;
       const cols = grid[0].length;
       let islandCount = 0;
+      let newCoordinatesToCheck = [];
 
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
@@ -79,10 +81,11 @@ function App() {
             islandCount++;
             const coordinatesToCheck = [[y, x]];
 
-
+            newCoordinatesToCheck.push(...coordinatesToCheck);
 
             while (coordinatesToCheck.length > 0) {
               setStackContent([...coordinatesToCheck]);
+              setCoordinatesToCheck([...coordinatesToCheck]);
               await new Promise(resolve => setTimeout(resolve, 1000));
               const [currY, currX] = coordinatesToCheck.pop();
               let paused = isPausedRef.current;
@@ -107,7 +110,7 @@ function App() {
                 }
               }
             }
-
+            setStackContent([]);
             await new Promise(resolve => setTimeout(resolve, 500));
           } else {
             await new Promise(resolve => setTimeout(resolve, 150));
@@ -116,8 +119,11 @@ function App() {
           newEmphasizedState[y][x] = !newEmphasizedState[y][x];
           setEmphasizedState(newEmphasizedState);
           setStackContent([])
+          setCoordinatesToCheck([])
         }
       }
+
+      //setCoordinatesToCheck(newCoordinatesToCheck);
 
       return islandCount;
     }
@@ -131,23 +137,26 @@ function App() {
 
   return (
     <div className="App">
-
       <div className="grid-and-stack">
         <div className="grid-container">
           {grid.map((row, rowIndex) => (
             <div key={rowIndex} className="row">
-              {row.map((cell, colIndex) => (
-                <div
-                  key={colIndex}
-                  className={`cell ${cell === 1 && 'one'} ${cell === 2 && 'two'
-                    } ${cell !== 1 && cell !== 2 && 'zero'} ${toggleStates[rowIndex][colIndex] ? 'active' : ''
-                    } ${emphasizedState[rowIndex][colIndex] ? 'emphasized' : ''
-                    }`}
-                  onClick={(e) => toggleCell(rowIndex, colIndex, e.shiftKey, e.ctrlKey, grid, setGrid, toggleStates, setToggleStates, emphasizedState, setEmphasizedState)}
-                >
-                  {cell}
-                </div>
-              ))}
+              {row.map((cell, colIndex) => {
+                const isInCoordinatesToCheck = coordinatesToCheck.some(coord => coord[0] === rowIndex && coord[1] === colIndex);
+                console.log(coordinatesToCheck)
+                return (
+                  <div
+                    key={colIndex}
+                    className={`cell ${cell === 1 && 'one'} ${cell === 2 && 'two'
+                      } ${cell !== 1 && cell !== 2 && 'zero'} ${toggleStates[rowIndex][colIndex] ? 'active' : ''
+                      } ${emphasizedState[rowIndex][colIndex] ? 'emphasized' : ''
+                      } ${isInCoordinatesToCheck ? 'outlined' : ''}`}
+                    onClick={(e) => toggleCell(rowIndex, colIndex, e.shiftKey, e.ctrlKey, grid, setGrid, toggleStates, setToggleStates, emphasizedState, setEmphasizedState)}
+                  >
+                    {cell}
+                  </div>
+                );
+              })}
             </div>
           ))}
         </div>
@@ -167,6 +176,7 @@ function App() {
       </div>
     </div>
   );
+
 }
 
 export default App;

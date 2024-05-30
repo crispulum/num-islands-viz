@@ -12,7 +12,7 @@
   display: inline-block;
   border: 1px solid black;
   margin-right: 20px;
-  background-color: #f8f8f8; 
+  background-color: #f8f8f8;
 }
 
 .row {
@@ -34,15 +34,15 @@
 }
 
 .zero {
-  background-color: skyblue;
+  background-color: rgb(56,82,184)
 }
-
+/* background-color: rgb(58, 58, 23) */
 .one {
-  background-color: lightgreen;
+  background-color: rgb(190, 145, 77)
 }
 
 .two {
-  background-color: darkgreen;
+  background-color: green;
 }
 
 .active {
@@ -54,7 +54,7 @@
 }
 
 .emphasized {
-  outline: 5px solid red;
+  outline: 5px solid red !important;
 }
 
 .stack-container {
@@ -81,5 +81,8 @@
   padding: 5px;
   border: 1px solid gray;
   margin-top: 5px;
-  background-color: #E8F8F5; 
+  background-color: #E8F8F5;
+}
+.outlined {
+  outline: 5px solid darkslategrey;
 }
