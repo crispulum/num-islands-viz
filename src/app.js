@@ -63,27 +63,27 @@ function App() {
           setEmphasizedState(newEmphasizedState);
           if (grid[y][x] === 1) {
             islandCount++;
-            const indicesToCheck = [[y, x]];
+            const coordinatesToCheck = [[y, x]];
 
-            while (indicesToCheck.length > 0) {
-              setStackContent([...indicesToCheck]);
+            while (coordinatesToCheck.length > 0) {
+              setStackContent([...coordinatesToCheck]);
               await new Promise(resolve => setTimeout(resolve, 1000));
-              const [currY, currX] = indicesToCheck.pop();
+              const [currY, currX] = coordinatesToCheck.pop();
 
               if (grid[currY][currX] === 1) {
                 grid[currY][currX] = 2;
                 setGrid([...grid]);
                 if (currY - 1 >= 0 && grid[currY - 1][currX] === 1) {
-                  indicesToCheck.push([currY - 1, currX]);
+                  coordinatesToCheck.push([currY - 1, currX]);
                 }
                 if (currY + 1 < rows && grid[currY + 1][currX] === 1) {
-                  indicesToCheck.push([currY + 1, currX]);
+                  coordinatesToCheck.push([currY + 1, currX]);
                 }
                 if (currX - 1 >= 0 && grid[currY][currX - 1] === 1) {
-                  indicesToCheck.push([currY, currX - 1]);
+                  coordinatesToCheck.push([currY, currX - 1]);
                 }
                 if (currX + 1 < cols && grid[currY][currX + 1] === 1) {
-                  indicesToCheck.push([currY, currX + 1]);
+                  coordinatesToCheck.push([currY, currX + 1]);
                 }
               }
             }
