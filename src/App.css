@@ -12,6 +12,7 @@
   display: inline-block;
   border: 1px solid black;
   margin-right: 20px;
+  background-color: #f8f8f8; 
 }
 
 .row {
@@ -21,16 +22,19 @@
 .cell {
   width: 50px;
   height: 50px;
-  border: 1px solid black;
+  border: 2px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   margin: 5px;
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  font-size: 25px;
 }
 
 .zero {
-  background-color: blue;
+  background-color: skyblue;
 }
 
 .one {
@@ -50,7 +54,7 @@
 }
 
 .emphasized {
-  outline: 5px solid gold;
+  outline: 5px solid red;
 }
 
 .stack-container {
@@ -77,5 +81,5 @@
   padding: 5px;
   border: 1px solid gray;
   margin-top: 5px;
-  background-color: #f0f0f0;
+  background-color: #E8F8F5; 
 }
