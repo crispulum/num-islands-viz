@@ -1,35 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+
+const length = 12;
+
+function createRandomGrid() {
+  return Array.from({ length }, () =>
+    Array.from({ length }, () => Math.round(Math.random()))
+  );
+}
+
+function createEmptyToggleStates() {
+  return Array.from({ length }, () =>
+    Array.from({ length }, () => 0)
+  );
+}
+
+function createEmptyHighlightedStates() {
+  return Array.from({ length }, () => 
+    Array.from({ length }, () => false)
+  );
+}
+
+function toggleCell(row, col) {
+  setHighlightedCurrentCell(prevState => {
+    const newState = [...prevState];
+    newState[row][col] = !newState[row][col];
+    return newState;
+  });
+}
+
+
 function App() {
-  const initialGrid = Array.from({ length: 12 }, () =>
-    Array.from({ length: 12 }, () => Math.round(Math.random()))
-  );
-
-  const [grid, setGrid] = useState(initialGrid);
-  const [toggleStates, setToggleStates] = useState(
-    Array.from({ length: 12 }, () => Array.from({ length: 12 }, () => false))
-  );
-  const [emphasizedState, setEmphasizedState] = useState(
-    Array.from({ length: 12 }, () => Array.from({ length: 12 }, () => false))
-  );
-  const [stackContent, setStackContent] = useState([]); // State to track stack content
-
-  const toggleCell = (row, col, shiftKey, ctrlKey) => {
-    if (shiftKey) {
-      const newEmphasizedState = [...emphasizedState];
-      newEmphasizedState[row][col] = !newEmphasizedState[row][col];
-      setEmphasizedState(newEmphasizedState);
-    } else if (ctrlKey && grid[row][col] === 1) {
-      const newGrid = [...grid];
-      newGrid[row][col] = 2;
-      setGrid(newGrid);
-    } else {
-      const newToggleStates = [...toggleStates];
-      newToggleStates[row][col] = !newToggleStates[row][col];
-      setToggleStates(newToggleStates);
-    }
-  };
+  const [grid, setGrid] = useState(createRandomGrid());
+  const [toggleStates, setToggleStates] = useState(createEmptyToggleStates());
+  const [emphasizedState, setEmphasizedState] = useState(createEmptyHighlightedStates());
+  const [stackContent, setStackContent] = useState([]);
 
   useEffect(() => {
     async function numIslands2(Realgrid) {
@@ -46,27 +52,27 @@ function App() {
           setEmphasizedState(newEmphasizedState);
           if (grid[y][x] === 1) {
             islandCount++;
-            const indicesToCheck = [[y, x]];
+            const coordinatesToCheck = [[y, x]];
 
-            while (indicesToCheck.length > 0) {
-              setStackContent([...indicesToCheck]); // Update stack content
+            while (coordinatesToCheck.length > 0) {
+              setStackContent([...coordinatesToCheck]);
               await new Promise(resolve => setTimeout(resolve, 1000));
-              const [currY, currX] = indicesToCheck.pop();
+              const [currY, currX] = coordinatesToCheck.pop();
 
               if (grid[currY][currX] === 1) {
                 grid[currY][currX] = 2;
                 setGrid([...grid]);
                 if (currY - 1 >= 0 && grid[currY - 1][currX] === 1) {
-                  indicesToCheck.push([currY - 1, currX]);
+                  coordinatesToCheck.push([currY - 1, currX]);
                 }
                 if (currY + 1 < rows && grid[currY + 1][currX] === 1) {
-                  indicesToCheck.push([currY + 1, currX]);
+                  coordinatesToCheck.push([currY + 1, currX]);
                 }
                 if (currX - 1 >= 0 && grid[currY][currX - 1] === 1) {
-                  indicesToCheck.push([currY, currX - 1]);
+                  coordinatesToCheck.push([currY, currX - 1]);
                 }
                 if (currX + 1 < cols && grid[currY][currX + 1] === 1) {
-                  indicesToCheck.push([currY, currX + 1]);
+                  coordinatesToCheck.push([currY, currX + 1]);
                 }
               }
             }
@@ -104,7 +110,6 @@ function App() {
                   } ${
                     emphasizedState[rowIndex][colIndex] ? 'emphasized' : ''
                   }`}
-                  onClick={() => toggleCell(rowIndex, colIndex)}
                 >
                   {cell}
                 </div>
@@ -117,7 +122,6 @@ function App() {
             <h2>Stack Content</h2>
           </div>
           <div className="stack-content">
-            {/* Map over stackContent in reverse order */}
             {stackContent.map((coord, index) => (
               <div className="stack-item" key={index}>
                 [{coord[0]}, {coord[1]}]

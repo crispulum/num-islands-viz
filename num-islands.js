@@ -9,29 +9,29 @@ function numIslands2(grid) {
         for (let x = 0; x < cols; x++) {
             if (grid[y][x] === 1) {
                 islandCount++;
-                const indicesToCheck = [[y, x]];
+                const coordinatesToCheck = [[y, x]];
 
-                while (indicesToCheck.length > 0) {
-                    const [currY, currX] = indicesToCheck.pop();
+                while (coordinatesToCheck.length > 0) {
+                    const [currY, currX] = coordinatesToCheck.pop();
 
                     if (grid[currY][currX] === 1) {
                         grid[currY][currX] = 2; // Mark the cell as visited
 
                         // Check up
                         if (currY - 1 >= 0 && grid[currY - 1][currX] === 1) {
-                            indicesToCheck.push([currY - 1, currX]);
+                            coordinatesToCheck.push([currY - 1, currX]);
                         }
                         // Check down
                         if (currY + 1 < rows && grid[currY + 1][currX] === 1) {
-                            indicesToCheck.push([currY + 1, currX]);
+                            coordinatesToCheck.push([currY + 1, currX]);
                         }
                         // Check left
                         if (currX - 1 >= 0 && grid[currY][currX - 1] === 1) {
-                            indicesToCheck.push([currY, currX - 1]);
+                            coordinatesToCheck.push([currY, currX - 1]);
                         }
                         // Check right
                         if (currX + 1 < cols && grid[currY][currX + 1] === 1) {
-                            indicesToCheck.push([currY, currX + 1]);
+                            coordinatesToCheck.push([currY, currX + 1]);
                         }
                     }
                 }
