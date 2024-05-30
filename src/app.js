@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 function createRandomGrid() {
@@ -8,13 +8,13 @@ function createRandomGrid() {
 }
 
 function createEmptyToggleStates() {
-  return Array.from({ length: 12 }, () => 
+  return Array.from({ length: 12 }, () =>
     Array.from({ length: 12 }, () => false)
   );
 }
 
 function createEmptyHighlightedStates() {
-  return Array.from({ length: 12 }, () => 
+  return Array.from({ length: 12 }, () =>
     Array.from({ length: 12 }, () => false)
   );
 }
@@ -41,12 +41,17 @@ function toggleCell(row, col, shiftKey, ctrlKey) {
   }
 }
 
-
 function App() {
   const [grid, setGrid] = useState(createRandomGrid());
   const [toggleStates, setToggleStates] = useState(createEmptyToggleStates());
   const [emphasizedState, setEmphasizedState] = useState(createEmptyHighlightedStates());
   const [stackContent, setStackContent] = useState([]);
+  const [isPaused, setIsPaused] = useState(false);
+  const isPausedRef = useRef(isPaused); 
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
   useEffect(() => {
     async function numIslands2(Realgrid) {
@@ -61,15 +66,30 @@ function App() {
           let newEmphasizedState = [...emphasizedState];
           newEmphasizedState[y][x] = !newEmphasizedState[y][x];
           setEmphasizedState(newEmphasizedState);
+          console.log(isPaused + " is paused")
+
+          let paused = isPausedRef.current;
+
+          while (paused) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            paused = isPausedRef.current;
+          }
+
           if (grid[y][x] === 1) {
             islandCount++;
             const coordinatesToCheck = [[y, x]];
+
+
 
             while (coordinatesToCheck.length > 0) {
               setStackContent([...coordinatesToCheck]);
               await new Promise(resolve => setTimeout(resolve, 1000));
               const [currY, currX] = coordinatesToCheck.pop();
-
+              let paused = isPausedRef.current;
+              while (paused) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                paused = isPausedRef.current;
+              }
               if (grid[currY][currX] === 1) {
                 grid[currY][currX] = 2;
                 setGrid([...grid]);
@@ -105,8 +125,13 @@ function App() {
     numIslands2(grid);
   }, []);
 
+  const togglePause = () => {
+    setIsPaused(prevState => !prevState);
+  };
+
   return (
     <div className="App">
+
       <div className="grid-and-stack">
         <div className="grid-container">
           {grid.map((row, rowIndex) => (
@@ -114,13 +139,10 @@ function App() {
               {row.map((cell, colIndex) => (
                 <div
                   key={colIndex}
-                  className={`cell ${cell === 1 && 'one'} ${
-                    cell === 2 && 'two'
-                  } ${cell !== 1 && cell !== 2 && 'zero'} ${
-                    toggleStates[rowIndex][colIndex] ? 'active' : ''
-                  } ${
-                    emphasizedState[rowIndex][colIndex] ? 'emphasized' : ''
-                  }`}
+                  className={`cell ${cell === 1 && 'one'} ${cell === 2 && 'two'
+                    } ${cell !== 1 && cell !== 2 && 'zero'} ${toggleStates[rowIndex][colIndex] ? 'active' : ''
+                    } ${emphasizedState[rowIndex][colIndex] ? 'emphasized' : ''
+                    }`}
                   onClick={(e) => toggleCell(rowIndex, colIndex, e.shiftKey, e.ctrlKey, grid, setGrid, toggleStates, setToggleStates, emphasizedState, setEmphasizedState)}
                 >
                   {cell}
@@ -132,9 +154,9 @@ function App() {
         <div className="stack-container">
           <div className="stack-header">
             <h2>Stack Content</h2>
+            <button onClick={togglePause}>{isPaused ? "Resume" : "Pause"}</button>
           </div>
           <div className="stack-content">
-            {/* Map over stackContent in reverse order */}
             {stackContent.map((coord, index) => (
               <div className="stack-item" key={index}>
                 [{coord[0]}, {coord[1]}]
