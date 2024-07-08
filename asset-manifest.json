@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/num-islands-viz/static/css/main.473ae794.css",
-    "main.js": "/num-islands-viz/static/js/main.a8b34956.js",
+    "main.js": "/num-islands-viz/static/js/main.3d704646.js",
     "index.html": "/num-islands-viz/index.html",
     "main.473ae794.css.map": "/num-islands-viz/static/css/main.473ae794.css.map",
-    "main.a8b34956.js.map": "/num-islands-viz/static/js/main.a8b34956.js.map"
+    "main.3d704646.js.map": "/num-islands-viz/static/js/main.3d704646.js.map"
   },
   "entrypoints": [
     "static/css/main.473ae794.css",
-    "static/js/main.a8b34956.js"
+    "static/js/main.3d704646.js"
   ]
 }
